@@ -26,7 +26,7 @@ function LoggedIn({ logout, userState, username, password, status, res }) {
     }
 
     const Table = async () => {
-
+        
         const res = await axios.post('https://myphysio.digitaldarwin.in/api/get-patient/', { "id": 1 }, {
             headers: {
                 'Accept': 'application/json',

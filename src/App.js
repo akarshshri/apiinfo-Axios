@@ -8,6 +8,7 @@ const api = axios.create(
 )
 
 const Stateless = () => {
+  
   if(localStorage.getItem('apiinfo') === null){
     localStorage.setItem('apiinfo',JSON.stringify([{usename: '', password: '' , userState: '',name:''}]));
   }
@@ -34,14 +35,28 @@ function App() {
     let arr = [{usename: '', password: '' , userState: ''}]
     localStorage.removeItem('apiinfo');
     localStorage.setItem('apiinfo',JSON.stringify(arr));
-   
   }
 
   const submitEvent = async (e)=>{
+    let temp='';
     e.preventDefault()
-    let temp = await api.post('/', { "uid": username, "password": password, "blocked": 0 }) 
+    try {
+      temp = await api.post('/', { "uid": username, "password": password, "blocked": 0 })    
+    } catch (error) {   
+      
+      document.getElementById('password').classList.add('error');
+      document.getElementById('username').classList.add('error');
+
+      setTimeout(() => {
+        document.getElementById('password').classList.remove('error');
+        document.getElementById('username').classList.remove('error');
+      }, 500);
+    }
+     
     setRes(temp)
     setStatus('OK')
+    
+    //console.log(res)
   }
 
   return (
@@ -50,7 +65,7 @@ function App() {
       {(res.statusText === 'OK' || JSON.parse(localStorage.getItem('apiinfo'))[0].userState === 'OK')?(
         <LoggedIn response ={ res} userState={res.statusText} logout={logout} username={username} password={password} status={status}/>
       ): (
-        <form onSubmit={submitEvent}><h1>Login</h1>
+        <form onSubmit={submitEvent} style={{width: '70%', margin: 'auto'}}><h1>Login</h1>
         <div className="mb-3">
           <label htmlFor="exampleInputEmail1" className="form-label" >Username</label>
           <input type="text" className="form-control" id="username" aria-describedby="emailHelp" placeholder='maymis10098' onChange={userchangeHandle}/>
